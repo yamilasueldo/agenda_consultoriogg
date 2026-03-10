@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Consultorio G.G. | Agenda</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand">
+        <img src="assets/img/logo.png" alt="Logo Consultorio Odontológico G.G." class="brand-logo">
+        <div class="brand-text">
+          <h1>Consultorio G.G.</h1>
+          <p>Agenda Odontológica</p>
+        </div>
+      </div>
+
+      <nav class="sidebar-nav">
+        <button class="nav-btn active" data-view="dashboard">Resumen</button>
+        <button class="nav-btn" data-view="calendar">Calendario</button>
+        <button class="nav-btn" data-view="week">Semana</button>
+        <button class="nav-btn" data-view="patients">Pacientes</button>
+      </nav>
+
+      <div class="sidebar-card">
+        <h3>Profesionales</h3>
+        <div class="professional-chip">Gladys</div>
+        <div class="professional-chip">Gerardo</div>
+      </div>
+
+      <div class="sidebar-card">
+        <h3>Sesión</h3>
+        <p id="sessionEmail">Cargando usuario...</p>
+        <button id="logoutBtn" class="btn btn-secondary full-width">Cerrar sesión</button>
+      </div>
+    </aside>
+
+    <main class="main-content">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">Sistema de turnos</p>
+          <h2 id="pageTitle">Resumen general</h2>
+        </div>
+
+        <div class="topbar-actions">
+          <button id="themeToggleBtn" class="icon-theme-btn" type="button" aria-label="Cambiar tema">☀️ </button>
+          <button id="openModalBtn" class="btn btn-primary">+ Nuevo turno</button>
+        </div>
+      </header>
+
+      <section id="dashboardView" class="view active-view">
+        <div class="stats-grid">
+          <article class="stat-card">
+            <span>Turnos hoy</span>
+            <strong id="statToday">0</strong>
+          </article>
+
+          <article class="stat-card">
+            <span>Confirmados</span>
+            <strong id="statConfirmed">0</strong>
+          </article>
+
+          <article class="stat-card">
+            <span>Pendientes</span>
+            <strong id="statPending">0</strong>
+          </article>
+
+          <article class="stat-card">
+            <span>Cancelados</span>
+            <strong id="statCancelled">0</strong>
+          </article>
+        </div>
+
+        <div class="dashboard-grid">
+          <section class="panel">
+            <div class="panel-header">
+              <h3>Turnos de hoy</h3>
+              <span id="todayDateLabel" class="panel-tag"></span>
+            </div>
+            <div id="todayAppointments" class="appointment-list"></div>
+          </section>
+
+          <section class="panel">
+            <div class="panel-header">
+              <h3>Próximos turnos</h3>
+            </div>
+            <div id="upcomingAppointments" class="appointment-list"></div>
+          </section>
+        </div>
+      </section>
+
+      <section id="calendarView" class="view">
+        <div class="panel">
+          <div class="calendar-toolbar">
+            <div class="calendar-nav">
+              <button id="prevMonthBtn" class="btn btn-secondary">←</button>
+              
+              <h3 id="calendarTitle"></h3>
+              <button id="nextMonthBtn" class="btn btn-secondary">→</button>
+              <button id="calendarTodayBtn" class="btn btn-secondary">Hoy</button>
+            </div>
+
+            <div class="calendar-filters">
+              <input type="text" id="searchInput" placeholder="Buscar paciente, DNI, teléfono o tratamiento...">
+              <select id="statusFilter">
+                <option value="">Todos los estados</option>
+                <option value="confirmed">Confirmados</option>
+                <option value="pending">Pendientes</option>
+                <option value="cancelled">Cancelados</option>
+              </select>
+              <select id="professionalFilter">
+                <option value="">Todos los profesionales</option>
+                <option value="Gladys">Gladys</option>
+                <option value="Gerardo">Gerardo</option>
+                <option value="Ambos">Ambos</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="calendar-weekdays">
+            <div>Lun</div>
+            <div>Mar</div>
+            <div>Mié</div>
+            <div>Jue</div>
+            <div>Vie</div>
+            <div>Sáb</div>
+            <div>Dom</div>
+          </div>
+
+          <div id="calendarGrid" class="calendar-grid"></div>
+        </div>
+      </section>
+
+      <section id="weekView" class="view">
+    <div class="panel">
+        <div class="calendar-toolbar">
+        <div class="calendar-nav">
+            <button id="prevWeekBtn" class="btn btn-secondary" type="button">←</button>
+            <h3>Vista semanal</h3>
+            <button id="nextWeekBtn" class="btn btn-secondary" type="button">→</button>
+            <button id="weekTodayBtn" class="btn btn-secondary" type="button">Semana actual</button>
+        </div>
+        <div class="panel-tag" id="weekRangeLabel"></div>
+        </div>
+        <div id="weekSchedule" class="week-schedule"></div>
+    </div>
+    </section>
+
+    <section id="patientsView" class="view">
+    <div class="panel">
+        <div class="panel-header">
+        <h3>Pacientes</h3>
+        <button type="button" id="newPatientBtn" class="btn btn-primary">+ Nuevo paciente</button>
+        </div>
+
+        <div class="patients-filters">
+        <input
+            type="text"
+            id="patientSearchInput"
+            placeholder="Buscar por nombre, DNI o teléfono..."
+        >
+        </div>
+
+        <div id="patientsList" class="patients-list"></div>
+    </div>
+    </section>
+
+  <div id="appointmentModal" class="modal hidden">
+    <div class="modal-backdrop" id="modalBackdrop"></div>
+
+    <div class="modal-content">
+      <div class="modal-header">
+        <div>
+          <p class="eyebrow">Consultorio G.G.</p>
+          <h3 id="modalTitle">Nuevo turno</h3>
+        </div>
+        <button id="closeModalBtn" class="icon-btn" type="button">✕</button>
+      </div>
+
+      <form id="appointmentForm" class="appointment-form">
+        <input type="hidden" id="editingId" name="editingId">
+
+        <div class="form-grid">
+          <div class="field field-full">
+            <label for="patientName">Paciente</label>
+            <input
+              type="text"
+              id="patientName"
+              name="patientName"
+              placeholder="Nombre completo del paciente"
+              required
+            >
+          </div>
+
+          <div class="field field-full checkbox-field">
+            <label class="checkbox-label">
+              <input type="checkbox" id="useRegisteredPatient" name="useRegisteredPatient">
+              <span>Seleccionar paciente registrado</span>
+            </label>
+          </div>
+
+          <div class="field field-full hidden" id="patientSelectWrapper">
+            <label for="patientSelect">Paciente registrado</label>
+            <select id="patientSelect" name="patientSelect">
+              <option value="">Seleccionar paciente</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="date">Fecha</label>
+            <input type="date" id="date" name="date" required>
+          </div>
+
+          <div class="field">
+            <label for="time">Hora</label>
+            <input type="time" id="time" name="time" required>
+          </div>
+
+          <div class="field">
+            <label for="professional">Profesional</label>
+            <select id="professional" name="professional">
+              <option value="Gladys">Gladys</option>
+              <option value="Gerardo">Gerardo</option>
+              <option value="Ambos">Ambos</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="status">Estado</label>
+            <select id="status" name="status">
+              <option value="confirmed">Confirmado</option>
+              <option value="pending">Pendiente</option>
+              <option value="cancelled">Cancelado</option>
+            </select>
+          </div>
+
+          <div class="field field-full">
+            <label for="treatment">Tratamiento</label>
+            <input type="text" id="treatment" name="treatment" placeholder="Ej: limpieza, control, extracción">
+          </div>
+
+          <div class="field field-full">
+            <label for="notes">Notas del turno</label>
+            <textarea id="notes" name="notes" rows="3" placeholder="Observaciones del turno"></textarea>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button type="button" id="clearFormBtn" class="btn btn-secondary">Limpiar</button>
+          <button type="submit" class="btn btn-primary" id="saveBtn">Guardar turno</button>
+        </div>
+      </form>
+    </div>
+  </div>
+    
+    <div id="historyModal" class="modal hidden">
+  <div class="modal-backdrop" id="historyModalBackdrop"></div>
+
+  <div class="modal-content">
+    <div class="modal-header">
+      <div>
+        <p class="eyebrow">Paciente</p>
+        <h3 id="historyModalTitle">Historia clínica</h3>
+      </div>
+      <button id="closeHistoryModalBtn" class="icon-btn" type="button">✕</button>
+    </div>
+
+    <div class="patient-summary" id="historyPatientSummary"></div>
+
+    <div class="field field-full" style="margin-top: 18px;">
+      <label for="historyCommentInput">Nuevo comentario</label>
+      <textarea
+        id="historyCommentInput"
+        rows="4"
+        placeholder="Escribí una observación, diagnóstico, control, tratamiento realizado, etc."
+      ></textarea>
+    </div>
+
+    <div class="form-actions">
+      <button type="button" id="saveHistoryCommentBtn" class="btn btn-primary">
+        Guardar comentario
+      </button>
+    </div>
+
+    <div class="panel" style="margin-top: 18px; padding: 16px;">
+      <div class="panel-header" style="margin-bottom: 12px;">
+        <h3 style="font-size: 1rem;">Registros de historia clínica</h3>
+      </div>
+      <div id="historyCommentsList" class="patients-list"></div>
+    </div>
+  </div>
+</div>
+
+<div id="patientModal" class="modal hidden">
+  <div class="modal-backdrop" id="patientModalBackdrop"></div>
+
+  <div class="modal-content">
+    <div class="modal-header">
+      <div>
+        <p class="eyebrow">Paciente</p>
+        <h3 id="patientModalTitle">Editar paciente</h3>
+      </div>
+      <button id="closePatientModalBtn" class="icon-btn" type="button">✕</button>
+    </div>
+
+    <form id="patientForm">
+      <input type="hidden" id="editingPatientId">
+
+      <div class="form-grid">
+        <div class="field field-full">
+          <label for="patientFullNameInput">Nombre completo</label>
+          <input type="text" id="patientFullNameInput" required>
+        </div>
+
+        <div class="field">
+          <label for="patientDniInput">DNI</label>
+          <input type="text" id="patientDniInput" placeholder="Ej: 40111222">
+        </div>
+
+        <div class="field">
+          <label for="patientPhoneInput">Teléfono</label>
+          <input type="text" id="patientPhoneInput" placeholder="Ej: 3794...">
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button type="button" id="cancelPatientBtn" class="btn btn-secondary">Cancelar</button>
+        <button type="submit" class="btn btn-primary">Guardar cambios</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-config.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

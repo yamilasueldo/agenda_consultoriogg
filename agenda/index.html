@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Consultorio G.G. | Ingreso</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body class="login-body">
+  <main class="login-page">
+    <section class="login-card">
+      <div class="login-topbar">
+        <button id="themeToggleBtn" class="icon-theme-btn" type="button" aria-label="Cambiar tema">
+          ☀️
+        </button>
+      </div>
+
+      <div class="login-brand">
+        <img src="assets/img/logo.png" alt="Logo G.G." class="login-logo">
+        <h1>Consultorio Odontológico G.G.</h1>
+        <p>Ingreso a la agenda virtual</p>
+      </div>
+
+      <form id="loginForm" class="login-form">
+        <div class="field">
+          <label for="email">Email</label>
+          <input type="email" id="email" required placeholder="example@consultoriogg.com" />
+        </div>
+
+        <div class="field">
+          <label for="password">Contraseña</label>
+          <input type="password" id="password" required placeholder="********" />
+        </div>
+
+        <button type="submit" class="btn btn-primary full-width">Ingresar</button>
+      </form>
+
+      <p id="loginMessage" class="auth-message"></p>
+    </section>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-config.js"></script>
+  <script src="auth.js"></script>
+</body>
+</html>
